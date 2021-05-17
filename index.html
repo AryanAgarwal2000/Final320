@@ -14264,9 +14264,1078 @@ a.anchor-link {
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>In this project, I am going to be using the public database that contains information about Formula 1 including the drivers and races going back to 1950. Lewis Hamilton is one of the best drivers ever in motorsport having won the drivers championship a record 7 times with a 8th one almost achieved this year. I will be looking at data to analyze how much better is he as compared to other drivers.</p>
+<p>In this project, I am going to be using the public database that contains information about Formula 1 including the drivers and races going back to 1950. Lewis Hamilton is one of the best drivers ever in motorsport having won the drivers championship a record 7 times with a 8th one almost achieved this year. Many at times drivers are compared to one another such as the great Michael Schumacher who also has 7 World Championship Titles. Lewis Hamilton has been beating every record set by Michael Schumacher including highest number of wins, highest number of pole positions, etc. I will be looking at data to analyze how much better is he as compared to other drivers and decided to form my own opinion on the debate between Michael Schumacher and Lewis Hamilton to see who is the greatest.</p>
 
 </div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Data-Scraping">Data Scraping<a class="anchor-link" href="#Data-Scraping">&#182;</a></h2><p>I import all the libraries that I will need in order to compute data analysis on my data. I got this data from the link given in the final project description which is called "Awesome Public Datasets". I found a database linked on that page made by Ergast which included information about Formula 1. I downloaded the database as csv files and uploaded them to jupyter which I will import using pandas below.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">RobustScaler</span>
+<span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">LabelEncoder</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;./data/drivers.csv&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>driverId</th>
+      <th>driverRef</th>
+      <th>number</th>
+      <th>code</th>
+      <th>forename</th>
+      <th>surname</th>
+      <th>dob</th>
+      <th>nationality</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>http://en.wikipedia.org/wiki/Lewis_Hamilton</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>heidfeld</td>
+      <td>\N</td>
+      <td>HEI</td>
+      <td>Nick</td>
+      <td>Heidfeld</td>
+      <td>5/10/1977</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Nick_Heidfeld</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>rosberg</td>
+      <td>6</td>
+      <td>ROS</td>
+      <td>Nico</td>
+      <td>Rosberg</td>
+      <td>6/27/1985</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Nico_Rosberg</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>alonso</td>
+      <td>14</td>
+      <td>ALO</td>
+      <td>Fernando</td>
+      <td>Alonso</td>
+      <td>7/29/1981</td>
+      <td>Spanish</td>
+      <td>http://en.wikipedia.org/wiki/Fernando_Alonso</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>kovalainen</td>
+      <td>\N</td>
+      <td>KOV</td>
+      <td>Heikki</td>
+      <td>Kovalainen</td>
+      <td>10/19/1981</td>
+      <td>Finnish</td>
+      <td>http://en.wikipedia.org/wiki/Heikki_Kovalainen</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;./data/driver_standings.csv&quot;</span><span class="p">)</span>
+<span class="n">df2</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>driverStandingsId</th>
+      <th>raceId</th>
+      <th>driverId</th>
+      <th>points</th>
+      <th>position</th>
+      <th>positionText</th>
+      <th>wins</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>18</td>
+      <td>1</td>
+      <td>10.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>2</td>
+      <td>18</td>
+      <td>2</td>
+      <td>8.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>3</td>
+      <td>18</td>
+      <td>3</td>
+      <td>6.0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>4</td>
+      <td>18</td>
+      <td>4</td>
+      <td>5.0</td>
+      <td>4</td>
+      <td>4</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>5</td>
+      <td>18</td>
+      <td>5</td>
+      <td>4.0</td>
+      <td>5</td>
+      <td>5</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[4]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df3</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;driverId&quot;</span><span class="p">])</span>
+<span class="n">df3</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>driverId</th>
+      <th>driverRef</th>
+      <th>number</th>
+      <th>code</th>
+      <th>forename</th>
+      <th>surname</th>
+      <th>dob</th>
+      <th>nationality</th>
+      <th>url</th>
+      <th>driverStandingsId</th>
+      <th>raceId</th>
+      <th>points</th>
+      <th>position</th>
+      <th>positionText</th>
+      <th>wins</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>http://en.wikipedia.org/wiki/Lewis_Hamilton</td>
+      <td>1</td>
+      <td>18</td>
+      <td>10.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>http://en.wikipedia.org/wiki/Lewis_Hamilton</td>
+      <td>9</td>
+      <td>19</td>
+      <td>14.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>http://en.wikipedia.org/wiki/Lewis_Hamilton</td>
+      <td>27</td>
+      <td>20</td>
+      <td>14.0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>http://en.wikipedia.org/wiki/Lewis_Hamilton</td>
+      <td>48</td>
+      <td>21</td>
+      <td>20.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>http://en.wikipedia.org/wiki/Lewis_Hamilton</td>
+      <td>69</td>
+      <td>22</td>
+      <td>28.0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>33020</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Mick_Schumacher</td>
+      <td>70226</td>
+      <td>1051</td>
+      <td>0.0</td>
+      <td>16</td>
+      <td>-</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33021</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Mick_Schumacher</td>
+      <td>70246</td>
+      <td>1052</td>
+      <td>0.0</td>
+      <td>16</td>
+      <td>16</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33022</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Mick_Schumacher</td>
+      <td>70306</td>
+      <td>1053</td>
+      <td>0.0</td>
+      <td>18</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33023</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Mick_Schumacher</td>
+      <td>70326</td>
+      <td>1054</td>
+      <td>0.0</td>
+      <td>18</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33024</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>http://en.wikipedia.org/wiki/Mick_Schumacher</td>
+      <td>70346</td>
+      <td>1055</td>
+      <td>0.0</td>
+      <td>18</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>33025 rows × 15 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[5]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df3</span> <span class="o">=</span> <span class="n">df3</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;url&#39;</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">df3</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>driverId</th>
+      <th>driverRef</th>
+      <th>number</th>
+      <th>code</th>
+      <th>forename</th>
+      <th>surname</th>
+      <th>dob</th>
+      <th>nationality</th>
+      <th>driverStandingsId</th>
+      <th>raceId</th>
+      <th>points</th>
+      <th>position</th>
+      <th>positionText</th>
+      <th>wins</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>1</td>
+      <td>18</td>
+      <td>10.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>9</td>
+      <td>19</td>
+      <td>14.0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>27</td>
+      <td>20</td>
+      <td>14.0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>48</td>
+      <td>21</td>
+      <td>20.0</td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>hamilton</td>
+      <td>44</td>
+      <td>HAM</td>
+      <td>Lewis</td>
+      <td>Hamilton</td>
+      <td>1/7/1985</td>
+      <td>British</td>
+      <td>69</td>
+      <td>22</td>
+      <td>28.0</td>
+      <td>3</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>33020</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>70226</td>
+      <td>1051</td>
+      <td>0.0</td>
+      <td>16</td>
+      <td>-</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33021</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>70246</td>
+      <td>1052</td>
+      <td>0.0</td>
+      <td>16</td>
+      <td>16</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33022</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>70306</td>
+      <td>1053</td>
+      <td>0.0</td>
+      <td>18</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33023</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>70326</td>
+      <td>1054</td>
+      <td>0.0</td>
+      <td>18</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>33024</th>
+      <td>854</td>
+      <td>mick_schumacher</td>
+      <td>47</td>
+      <td>MSC</td>
+      <td>Mick</td>
+      <td>Schumacher</td>
+      <td>3/22/1999</td>
+      <td>German</td>
+      <td>70346</td>
+      <td>1055</td>
+      <td>0.0</td>
+      <td>18</td>
+      <td>18</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>33025 rows × 14 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df3</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">include</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>driverId</th>
+      <th>driverRef</th>
+      <th>number</th>
+      <th>code</th>
+      <th>forename</th>
+      <th>surname</th>
+      <th>dob</th>
+      <th>nationality</th>
+      <th>driverStandingsId</th>
+      <th>raceId</th>
+      <th>points</th>
+      <th>position</th>
+      <th>positionText</th>
+      <th>wins</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>count</th>
+      <td>33025.000000</td>
+      <td>33025</td>
+      <td>33025</td>
+      <td>33025</td>
+      <td>33025</td>
+      <td>33025</td>
+      <td>33025</td>
+      <td>33025</td>
+      <td>33025.000000</td>
+      <td>33025.000000</td>
+      <td>33025.000000</td>
+      <td>33025.000000</td>
+      <td>33025</td>
+      <td>33025.000000</td>
+    </tr>
+    <tr>
+      <th>unique</th>
+      <td>NaN</td>
+      <td>846</td>
+      <td>43</td>
+      <td>90</td>
+      <td>467</td>
+      <td>788</td>
+      <td>828</td>
+      <td>41</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>110</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>top</th>
+      <td>NaN</td>
+      <td>raikkonen</td>
+      <td>\N</td>
+      <td>\N</td>
+      <td>Eddie</td>
+      <td>Schumacher</td>
+      <td>10/17/1979</td>
+      <td>British</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>7</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>freq</th>
+      <td>NaN</td>
+      <td>336</td>
+      <td>28096</td>
+      <td>24200</td>
+      <td>469</td>
+      <td>498</td>
+      <td>336</td>
+      <td>5680</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1039</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>mean</th>
+      <td>294.801241</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>40723.507555</td>
+      <td>556.926662</td>
+      <td>12.129018</td>
+      <td>20.181257</td>
+      <td>NaN</td>
+      <td>0.261014</td>
+    </tr>
+    <tr>
+      <th>std</th>
+      <td>255.846940</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>21612.060208</td>
+      <td>273.026588</td>
+      <td>32.509761</td>
+      <td>16.550294</td>
+      <td>NaN</td>
+      <td>0.960712</td>
+    </tr>
+    <tr>
+      <th>min</th>
+      <td>1.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.000000</td>
+      <td>1.000000</td>
+      <td>0.000000</td>
+      <td>1.000000</td>
+      <td>NaN</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>25%</th>
+      <td>84.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>18969.000000</td>
+      <td>338.000000</td>
+      <td>0.000000</td>
+      <td>8.000000</td>
+      <td>NaN</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>50%</th>
+      <td>210.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>48719.000000</td>
+      <td>583.000000</td>
+      <td>1.000000</td>
+      <td>16.000000</td>
+      <td>NaN</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>75%</th>
+      <td>478.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>57716.000000</td>
+      <td>784.000000</td>
+      <td>9.000000</td>
+      <td>26.000000</td>
+      <td>NaN</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td>854.000000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>70350.000000</td>
+      <td>1055.000000</td>
+      <td>413.000000</td>
+      <td>108.000000</td>
+      <td>NaN</td>
+      <td>13.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
